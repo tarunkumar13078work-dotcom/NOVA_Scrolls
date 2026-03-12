@@ -1,0 +1,6 @@
+import{c,j as e,m as i,p as o}from"./index-DI_uGqSX.js";/**
+ * @license lucide-react v0.436.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const n=c("Rocket",[["path",{d:"M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z",key:"m3kijz"}],["path",{d:"m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z",key:"1fmvmk"}],["path",{d:"M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0",key:"1f8sc4"}],["path",{d:"M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5",key:"qeys4"}]]),r=({title:t,subtitle:a,action:s})=>e.jsxs(i.div,{variants:o,initial:"initial",animate:"animate",className:"glass-card mx-auto flex max-w-lg flex-col items-center gap-3 rounded-2xl border border-white/10 px-6 py-10 text-center",children:[e.jsx("div",{className:"flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-neon/40 via-glow/30 to-aqua/40 text-white shadow-neon",children:e.jsx(n,{className:"h-6 w-6"})}),e.jsx("h3",{className:"text-xl font-semibold text-white",children:t}),e.jsx("p",{className:"text-sm text-slate-400",children:a}),s]});export{r as E};
