@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background: #050816;
+  color: #e4e4f5;
+  min-height: 100vh;
+  font-family: 'Space Grotesk', 'Sora', 'DM Sans', system-ui, -apple-system, sans-serif;
+}
+
+::selection {
+  background: rgba(124, 58, 237, 0.35);
+  color: #fff;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(124, 58, 237, 0.25);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #7c3aed 0%, #00eaff 100%);
+  border-radius: 9999px;
+}
+
+.card-sheen {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-sheen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.06) 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 0.8s ease;
+}
+
+.card-sheen:hover::after,
+.card-sheen:focus-within::after {
+  transform: translateX(120%);
+}
+
+.glass-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(124, 58, 237, 0.25);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), 0 25px 80px rgba(0, 234, 255, 0.08);
+}
+
+.button-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(0, 234, 255, 0.4);
+  background: linear-gradient(120deg, #7c3aed, #00eaff, #ff00cc);
+  color: #fff;
+  padding: 0.55rem 0.95rem;
+  font-weight: 600;
+  box-shadow: 0 15px 45px rgba(124, 58, 237, 0.35);
+  transition: transform 0.12s ease, box-shadow 0.2s ease;
+}
+
+.button-cta:hover {
+  transform: translateY(-1px) scale(1.01);
+  box-shadow: 0 18px 60px rgba(0, 234, 255, 0.28);
+}
+
+.button-cta:active {
+  transform: translateY(0) scale(0.99);
+}
+
+.button-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 0.7rem;
+  border: 1px solid rgba(0, 234, 255, 0.25);
+  background: rgba(0, 234, 255, 0.08);
+  color: #8cecff;
+  padding: 0.5rem 0.85rem;
+  font-weight: 600;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.12s ease;
+}
+
+.button-ghost:hover {
+  border-color: rgba(124, 58, 237, 0.4);
+  background: rgba(124, 58, 237, 0.14);
+  transform: translateY(-1px);
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
