@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="NOVA Scrolls">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#00e8ff"/>
+      <stop offset="100%" stop-color="#20ff98"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="#05070d"/>
+  <path d="M130 372V140h88l164 186V140h0v232h-88L130 186v186z" fill="url(#g)"/>
+</svg>

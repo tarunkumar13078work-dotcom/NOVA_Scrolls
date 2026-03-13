@@ -8,9 +8,17 @@ const protect = async (req, res, next) => {
   }
 
   const token = header.split(' ')[1];
+  const secret = process.env.JWT_ACCESS_SECRET || process.env.JWT_SECRET;
+
+  if (!secret) {
+    return res.status(500).json({ message: 'JWT secret is not configured' });
+  }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, secret);
+    if (decoded.type && decoded.type !== 'access') {
+      return res.status(401).json({ message: 'Invalid token type' });
+    }
     req.user = await User.findById(decoded.id).select('-password');
     if (!req.user) {
       return res.status(401).json({ message: 'User not found' });

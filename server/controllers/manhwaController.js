@@ -9,7 +9,20 @@ export const listManhwa = asyncHandler(async (req, res) => {
 });
 
 export const createManhwa = asyncHandler(async (req, res) => {
-  const { title, cover, totalChapters, status, currentChapter, latestChapter } = req.body;
+  const {
+    title,
+    cover,
+    totalChapters,
+    status,
+    currentChapter,
+    latestChapter,
+    favorite,
+    tags,
+    collection,
+    source,
+    sourceUrl,
+    sourceSlug,
+  } = req.body;
   if (!title) {
     return res.status(400).json({ message: 'Title is required' });
   }
@@ -20,6 +33,9 @@ export const createManhwa = asyncHandler(async (req, res) => {
     cover,
     totalChapters: Number(totalChapters) || 0,
     status: status || 'reading',
+    favorite: Boolean(favorite),
+    tags: Array.isArray(tags) ? tags : [],
+    collection: collection || '',
   });
 
   await Progress.create({
@@ -31,6 +47,9 @@ export const createManhwa = asyncHandler(async (req, res) => {
   await Update.create({
     userId: req.user._id,
     manhwaId: manhwa._id,
+    source: source || 'asura',
+    sourceUrl: sourceUrl || '',
+    sourceSlug: sourceSlug || '',
     latestChapter: Number(latestChapter) || Number(totalChapters) || 0,
   });
 
@@ -39,10 +58,20 @@ export const createManhwa = asyncHandler(async (req, res) => {
 
 export const updateManhwa = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { title, cover, totalChapters, status } = req.body;
+  const { title, cover, totalChapters, status, favorite, tags, collection } = req.body;
+  const nextFields = {
+    ...(title !== undefined ? { title } : {}),
+    ...(cover !== undefined ? { cover } : {}),
+    ...(totalChapters !== undefined ? { totalChapters } : {}),
+    ...(status !== undefined ? { status } : {}),
+    ...(favorite !== undefined ? { favorite: Boolean(favorite) } : {}),
+    ...(tags !== undefined ? { tags: Array.isArray(tags) ? tags : [] } : {}),
+    ...(collection !== undefined ? { collection } : {}),
+  };
+
   const manhwa = await Manhwa.findOneAndUpdate(
     { _id: id, userId: req.user._id },
-    { title, cover, totalChapters, status },
+    nextFields,
     { new: true }
   );
   if (!manhwa) return res.status(404).json({ message: 'Manhwa not found' });

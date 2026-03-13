@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import useAuth from '../hooks/useAuth.js';
+import useAuth from '../hooks/useAuth';
 import Background from '../components/Background.jsx';
 
 const Auth = () => {

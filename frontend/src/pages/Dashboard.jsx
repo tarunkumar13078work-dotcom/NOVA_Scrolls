@@ -1,27 +1,58 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { RefreshCw, Search, SlidersHorizontal } from 'lucide-react';
-import useData from '../hooks/useData.js';
+import useData from '../hooks/useData';
 import StatCard from '../components/StatCard.jsx';
 import ManhwaCard from '../components/ManhwaCard.jsx';
+import AnalyticsPanel from '../components/AnalyticsPanel.jsx';
+import AIInsightsPanel from '../components/AIInsightsPanel.jsx';
 import LoadingSkeleton from '../components/LoadingSkeleton.jsx';
 import EmptyState from '../components/EmptyState.jsx';
-import useToast from '../hooks/useToast.js';
+import useToast from '../hooks/useToast';
+import useDebouncedValue from '../hooks/useDebouncedValue';
 import { stagger } from '../animations/presets.js';
 
 const Dashboard = () => {
-  const { manhwa, stats, loading, refresh, updateProgress, error } = useData();
+  const {
+    manhwa,
+    stats,
+    analytics,
+    aiRecommendations,
+    aiPredictions,
+    aiReadingSpeed,
+    loading,
+    refresh,
+    updateProgress,
+    markAsRead,
+    toggleFavorite,
+    error,
+  } = useData();
   const { addToast } = useToast();
 
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState('all');
+  const [tag, setTag] = useState('all');
   const [sort, setSort] = useState('recent');
+  const listRef = useRef(null);
+  const debouncedQuery = useDebouncedValue(query, 250);
+
+  const allTags = useMemo(() => {
+    const tagSet = new Set();
+    manhwa.forEach((item) => {
+      (item.tags || []).forEach((itemTag) => tagSet.add(itemTag));
+    });
+    return Array.from(tagSet).sort((a, b) => a.localeCompare(b));
+  }, [manhwa]);
 
   const filtered = useMemo(() => {
-    const q = query.toLowerCase();
+    const q = debouncedQuery.toLowerCase();
     let list = manhwa.filter((item) => item.title.toLowerCase().includes(q));
     if (status !== 'all') {
       list = list.filter((item) => item.status === status);
+    }
+    if (tag !== 'all') {
+      list = list.filter((item) => Array.isArray(item.tags) && item.tags.includes(tag));
     }
     if (sort === 'recent') {
       list = list.slice().sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
@@ -36,8 +67,17 @@ const Dashboard = () => {
     } else if (sort === 'title') {
       list = list.slice().sort((a, b) => a.title.localeCompare(b.title));
     }
+    list = list.slice().sort((a, b) => Number(Boolean(b.favorite)) - Number(Boolean(a.favorite)));
     return list;
-  }, [manhwa, query, sort, status]);
+  }, [debouncedQuery, manhwa, sort, status, tag]);
+
+  const shouldVirtualize = filtered.length > 30;
+  const virtualizer = useVirtualizer({
+    count: shouldVirtualize ? filtered.length : 0,
+    getScrollElement: () => listRef.current,
+    estimateSize: () => 258,
+    overscan: 6,
+  });
 
   const handleRefresh = async () => {
     await refresh();
@@ -110,6 +150,23 @@ const Dashboard = () => {
               </option>
             </select>
           </div>
+          <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-200">
+            <span>Tag</span>
+            <select
+              value={tag}
+              onChange={(e) => setTag(e.target.value)}
+              className="bg-transparent text-sm outline-none"
+            >
+              <option value="all" className="bg-space text-white">
+                All tags
+              </option>
+              {allTags.map((itemTag) => (
+                <option key={itemTag} value={itemTag} className="bg-space text-white">
+                  {itemTag}
+                </option>
+              ))}
+            </select>
+          </div>
           <motion.button
             whileTap={{ scale: 0.98 }}
             onClick={handleRefresh}
@@ -123,6 +180,22 @@ const Dashboard = () => {
 
       {error && <p className="text-sm text-amber-300">{error}</p>}
 
+      <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+        <div className="mb-3 flex items-center justify-between">
+          <div>
+            <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Analytics</p>
+            <h3 className="text-lg font-semibold text-white">Reading intelligence</h3>
+          </div>
+        </div>
+        <AnalyticsPanel analytics={analytics} />
+      </div>
+
+      <AIInsightsPanel
+        recommendations={aiRecommendations}
+        predictions={aiPredictions}
+        readingSpeed={aiReadingSpeed}
+      />
+
       {loading ? (
         <div className="grid gap-4 md:grid-cols-2">
           {[...Array(4)].map((_, idx) => (
@@ -130,11 +203,44 @@ const Dashboard = () => {
           ))}
         </div>
       ) : filtered.length ? (
-        <div className="grid gap-4 md:grid-cols-2">
-          {filtered.map((item) => (
-            <ManhwaCard key={item._id} item={item} onUpdateProgress={updateProgress} />
-          ))}
-        </div>
+        shouldVirtualize ? (
+          <div ref={listRef} className="max-h-[72vh] overflow-auto pr-1">
+            <div
+              style={{ height: `${virtualizer.getTotalSize()}px` }}
+              className="relative w-full"
+            >
+              {virtualizer.getVirtualItems().map((virtualRow) => {
+                const item = filtered[virtualRow.index];
+                return (
+                  <div
+                    key={item._id}
+                    className="absolute left-0 top-0 w-full pb-4"
+                    style={{ transform: `translateY(${virtualRow.start}px)` }}
+                  >
+                    <ManhwaCard
+                      item={item}
+                      onUpdateProgress={updateProgress}
+                      onMarkRead={markAsRead}
+                      onToggleFavorite={toggleFavorite}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2">
+            {filtered.map((item) => (
+              <ManhwaCard
+                key={item._id}
+                item={item}
+                onUpdateProgress={updateProgress}
+                onMarkRead={markAsRead}
+                onToggleFavorite={toggleFavorite}
+              />
+            ))}
+          </div>
+        )
       ) : (
         <EmptyState
           title="No manhwa tracked yet"

@@ -2,6 +2,7 @@ import Update from '../models/Update.js';
 import Progress from '../models/Progress.js';
 import Manhwa from '../models/Manhwa.js';
 import asyncHandler from '../utils/asyncHandler.js';
+import { recordReadingActivity } from '../services/activityService.js';
 
 export const getUpdates = asyncHandler(async (req, res) => {
   const updates = await Update.find({ userId: req.user._id });
@@ -21,6 +22,8 @@ export const getUpdates = asyncHandler(async (req, res) => {
         manhwaId: u.manhwaId,
         title: manhwa.title,
         cover: manhwa.cover,
+        source: u.source,
+        sourceUrl: u.sourceUrl,
         currentChapter: prog.currentChapter,
         latestChapter: u.latestChapter,
         unread,
@@ -38,11 +41,15 @@ export const markAsRead = asyncHandler(async (req, res) => {
   if (!update) return res.status(404).json({ message: 'Update not found' });
 
   const latest = update.latestChapter || 0;
+  const previous = await Progress.findOne({ manhwaId: id, userId: req.user._id });
+  const previousChapter = previous?.currentChapter || 0;
   const progress = await Progress.findOneAndUpdate(
     { manhwaId: id, userId: req.user._id },
     { currentChapter: latest },
     { new: true }
   );
+
+  await recordReadingActivity(req.user._id, Math.max(0, latest - previousChapter));
 
   await Update.findOneAndUpdate(
     { manhwaId: id, userId: req.user._id },
@@ -54,10 +61,16 @@ export const markAsRead = asyncHandler(async (req, res) => {
 
 export const upsertUpdate = asyncHandler(async (req, res) => {
   const { id } = req.params; // manhwaId
-  const { latestChapter } = req.body;
+  const { latestChapter, source, sourceUrl, sourceSlug } = req.body;
   const update = await Update.findOneAndUpdate(
     { manhwaId: id, userId: req.user._id },
-    { latestChapter: Number(latestChapter) || 0, lastChecked: new Date() },
+    {
+      latestChapter: Number(latestChapter) || 0,
+      lastChecked: new Date(),
+      ...(source !== undefined ? { source } : {}),
+      ...(sourceUrl !== undefined ? { sourceUrl } : {}),
+      ...(sourceSlug !== undefined ? { sourceSlug } : {}),
+    },
     { new: true, upsert: true }
   );
   res.json(update);

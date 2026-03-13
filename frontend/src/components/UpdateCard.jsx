@@ -25,8 +25,9 @@ const UpdateCard = ({ item, onMarkRead }) => {
         <div>
           <h4 className="text-lg font-semibold text-white">{item.title}</h4>
           <p className="text-sm text-slate-400">
-            Ch. {item.currentChapter} → {item.latestChapter} ({unread} new)
+            Ch. {item.currentChapter} -> {item.latestChapter}
           </p>
+          <p className="text-sm font-semibold text-amber-300">🔥 {unread} new chapter{unread > 1 ? 's' : ''} available</p>
           <div className="mt-1 flex items-center gap-2 text-xs text-slate-400">
             <BellRing className="h-4 w-4" />
             <span>Last checked {new Date(item.lastChecked || Date.now()).toLocaleDateString()}</span>

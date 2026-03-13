@@ -2,10 +2,10 @@ import React, { Suspense, lazy } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import Layout from './components/Layout.jsx';
-import { AuthProvider } from './context/AuthContext.jsx';
-import { DataProvider } from './context/DataContext.jsx';
-import { ToastProvider } from './context/ToastContext.jsx';
-import useAuth from './hooks/useAuth.js';
+import { AuthProvider } from './context/AuthContext';
+import { DataProvider } from './context/DataContext';
+import { ToastProvider } from './context/ToastContext';
+import useAuth from './hooks/useAuth';
 
 const Dashboard = lazy(() => import('./pages/Dashboard.jsx'));
 const Updates = lazy(() => import('./pages/Updates.jsx'));

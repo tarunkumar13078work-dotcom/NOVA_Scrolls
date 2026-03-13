@@ -11,6 +11,9 @@ const manhwaSchema = new mongoose.Schema(
       enum: ['reading', 'completed', 'on-hold', 'dropped', 'planning'],
       default: 'reading',
     },
+    favorite: { type: Boolean, default: false },
+    tags: { type: [String], default: [] },
+    collection: { type: String, default: '' },
   },
   { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } }
 );

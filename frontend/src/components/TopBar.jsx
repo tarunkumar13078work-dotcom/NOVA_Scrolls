@@ -1,11 +1,13 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Rocket, PlusCircle } from 'lucide-react';
-import useAuth from '../hooks/useAuth.js';
+import { Download, Rocket, PlusCircle } from 'lucide-react';
+import useAuth from '../hooks/useAuth';
+import usePwaInstall from '../hooks/usePwaInstall';
 
 const TopBar = () => {
   const { user } = useAuth();
+  const { canInstall, promptInstall } = usePwaInstall();
 
   return (
     <header className="mb-6 flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur card-sheen">
@@ -20,6 +22,16 @@ const TopBar = () => {
       </Link>
 
       <div className="flex items-center gap-2">
+        {canInstall && (
+          <button
+            type="button"
+            onClick={() => promptInstall()}
+            className="hidden items-center gap-2 rounded-xl border border-aqua/50 bg-aqua/10 px-3 py-2 text-sm font-semibold text-aqua transition hover:bg-aqua/20 md:inline-flex"
+          >
+            <Download className="h-4 w-4" />
+            Install app
+          </button>
+        )}
         <NavLink
           to="/upload"
           className="hidden items-center gap-2 rounded-xl bg-gradient-to-r from-neon to-aqua px-3 py-2 text-sm font-semibold text-white shadow-neon transition hover:scale-[1.01] md:inline-flex"
@@ -35,6 +47,9 @@ const TopBar = () => {
           <span className="rounded-full bg-white/10 px-2 py-1 text-[11px] uppercase tracking-wider text-aqua">Synced</span>
           <span className="text-sm font-medium">{user?.username || 'Pilot'}</span>
         </motion.div>
+        <div className="hidden rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-300 lg:block">
+          Shortcuts: <span className="text-aqua">A</span> add, <span className="text-aqua">U</span> updates, <span className="text-aqua">R</span> mark read
+        </div>
       </div>
     </header>
   );

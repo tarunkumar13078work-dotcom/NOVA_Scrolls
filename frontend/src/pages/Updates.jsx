@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { BellRing } from 'lucide-react';
-import useData from '../hooks/useData.js';
+import useData from '../hooks/useData';
 import UpdateCard from '../components/UpdateCard.jsx';
 import EmptyState from '../components/EmptyState.jsx';
 import { fadeIn, stagger } from '../animations/presets.js';

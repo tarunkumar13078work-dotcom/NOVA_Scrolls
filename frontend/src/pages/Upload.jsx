@@ -1,11 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import UploadForm from '../components/UploadForm.jsx';
-import useData from '../hooks/useData.js';
+import useData from '../hooks/useData';
 import { fadeIn } from '../animations/presets.js';
 
 const Upload = () => {
-  const { addManhwa } = useData();
+  const { addManhwa, importLibraryBackup, aiAutofillMetadata } = useData();
 
   return (
     <div className="space-y-6">
@@ -29,7 +29,11 @@ const Upload = () => {
         </motion.span>
       </motion.div>
 
-      <UploadForm onSubmit={addManhwa} />
+      <UploadForm
+        onSubmit={addManhwa}
+        onImportBackup={importLibraryBackup}
+        onAutofillMetadata={aiAutofillMetadata}
+      />
     </div>
   );
 };

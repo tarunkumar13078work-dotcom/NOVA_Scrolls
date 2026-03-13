@@ -5,14 +5,26 @@ import Background from './Background.jsx';
 import BottomNav from './BottomNav.jsx';
 import TopBar from './TopBar.jsx';
 import { pageTransition } from '../animations/presets.js';
+import useData from '../hooks/useData';
+import useKeyboardShortcuts from '../hooks/useKeyboardShortcuts';
 
 const Layout = () => {
   const location = useLocation();
+  const { updates, markAsRead } = useData();
+
+  useKeyboardShortcuts({
+    onMarkReadTopUpdate: () => {
+      const firstUnread = (updates || []).find((item) => (item.unread || 0) > 0);
+      if (firstUnread?.manhwaId) {
+        markAsRead(firstUnread.manhwaId);
+      }
+    },
+  });
 
   return (
     <div className="relative min-h-screen bg-space text-slate-100">
       <Background />
-      <div className="relative z-10 mx-auto max-w-6xl px-4 pb-24 pt-6 md:pb-10">
+      <div className="relative z-10 mx-auto max-w-6xl px-4 pb-24 pt-6 md:max-w-7xl md:pb-10">
         <TopBar />
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
