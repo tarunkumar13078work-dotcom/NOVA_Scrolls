@@ -3,8 +3,11 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig(({ mode }) => ({
   plugins: [react()],
-  // GitHub Pages project-site path; keep root path in local development.
-  base: mode === 'production' ? '/NOVA_Scrolls/' : '/',
+  // Resolve GitHub Pages project-site path from repository name.
+  base:
+    mode === 'production'
+      ? `/${(process.env.GITHUB_REPOSITORY || 'tarunkumar13078work-dotcom/Nova').split('/')[1] || 'Nova'}/`
+      : '/',
   server: {
     port: 5173,
   },
