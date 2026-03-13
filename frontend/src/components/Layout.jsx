@@ -24,7 +24,7 @@ const Layout = () => {
   return (
     <div className="relative min-h-screen bg-space text-slate-100">
       <Background />
-      <div className="relative z-10 mx-auto max-w-6xl px-4 pb-24 pt-6 md:max-w-7xl md:pb-10">
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-3 pb-28 pt-4 sm:px-4 sm:pt-6 md:px-6 md:pb-10 xl:px-8">
         <TopBar />
         <AnimatePresence mode="wait" initial={false}>
           <motion.div

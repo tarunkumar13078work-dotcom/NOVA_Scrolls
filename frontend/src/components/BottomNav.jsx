@@ -14,7 +14,7 @@ const BottomNav = () => {
   const location = useLocation();
 
   return (
-    <nav className="fixed inset-x-0 bottom-3 z-40 mx-auto flex max-w-md items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-lg md:hidden">
+    <nav className="fixed inset-x-0 bottom-2 z-40 mx-auto flex w-[calc(100%-1rem)] max-w-md items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-3 py-2.5 backdrop-blur-lg md:hidden" style={{ paddingBottom: 'max(0.625rem, env(safe-area-inset-bottom))' }}>
       {navItems.map((item) => (
         <NavLink
           key={item.to}
