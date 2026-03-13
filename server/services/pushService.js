@@ -4,12 +4,18 @@ import NotificationSubscription from '../models/NotificationSubscription.js';
 const publicKey = process.env.VAPID_PUBLIC_KEY;
 const privateKey = process.env.VAPID_PRIVATE_KEY;
 const subject = process.env.VAPID_SUBJECT || 'mailto:admin@nova-scrolls.local';
+let pushConfigured = false;
 
 if (publicKey && privateKey) {
-  webpush.setVapidDetails(subject, publicKey, privateKey);
+  try {
+    webpush.setVapidDetails(subject, publicKey, privateKey);
+    pushConfigured = true;
+  } catch (error) {
+    console.warn('[push] Invalid VAPID configuration. Push notifications are disabled.', error.message);
+  }
 }
 
-export const hasPushConfig = () => Boolean(publicKey && privateKey);
+export const hasPushConfig = () => pushConfigured;
 
 export const sendPushToUser = async (userId, payload) => {
   if (!hasPushConfig()) return { sent: 0 };
